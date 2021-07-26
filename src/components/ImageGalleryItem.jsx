@@ -1,7 +1,15 @@
-export default function ImageGalleryItem() {
+export default function ImageGalleryItem({ pictures }) {
   return (
-    <li className="ImageGalleryItem">
-      <img src="" alt="" className="ImageGalleryItem-image" />
-    </li>
+    <>
+      {pictures.map((picture) => (
+        <li key={picture.id} className="ImageGalleryItem">
+          <img
+            src={picture.webformatURL}
+            alt={picture.tags}
+            className="ImageGalleryItem-image"
+          />
+        </li>
+      ))}
+    </>
   )
 }
