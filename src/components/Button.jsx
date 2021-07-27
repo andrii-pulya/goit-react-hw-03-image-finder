@@ -1,11 +1,6 @@
-export default function Button() {
-  //   const handleSubmit = (e) => {
-  //     e.preventDefault()
-  //     onSubmit(e.target.elements.picturename.value)
-  //   }
-
+export default function Button({ onClick }) {
   return (
-    <button type="button" className="Button">
+    <button type="button" className="Button" onClick={onClick}>
       <span>Load more</span>
     </button>
   )

@@ -6,9 +6,11 @@ import toast, { Toaster } from "react-hot-toast";
 import Serchbar from "./components/Searchbar";
 import ImageGallery from "./components/ImageGallery.jsx";
 import ImageGalleryItem from "./components/ImageGalleryItem.jsx";
-import Modal from "./components/Modal.jsx";
+// import Modal from './components/Modal.jsx'
 import Button from "./components/Button.jsx";
-import { pictureFind } from "./services/apiService";
+import PixabayServiseApi from "./services/apiService";
+
+const PixabayService = new PixabayServiseApi();
 
 export default class App extends Component {
   state = {
@@ -23,7 +25,8 @@ export default class App extends Component {
       toast.error("Please, enter the key word!");
     } else {
       if (prevState.pictureName !== this.state.pictureName) {
-        pictureFind(this.state.pictureName).then((response) => {
+        PixabayService.resetPage();
+        PixabayService.pictureFind(this.state.pictureName).then((response) => {
           if (response.hits.length === 0) {
             toast.error("We tried, but can't find any");
           } else {
@@ -38,10 +41,22 @@ export default class App extends Component {
     this.setState({ pictureName: pictureName.trim() });
   };
 
+  handleLoadMore = () => {
+    PixabayService.incrementPage();
+    PixabayService.pictureFind(this.state.pictureName).then((response) => {
+      const newImages = response.hits;
+      this.setState({ pictures: [...this.state.pictures, ...newImages] });
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: "smooth",
+      });
+    });
+  };
+
   render() {
     const { pictures } = this.state;
     const showGallery = pictures.length > 1;
-    const showLoadMoreBtn = pictures.length === 12;
+    const showLoadMoreBtn = pictures.length >= 12;
     return (
       <div>
         <Serchbar onSubmit={this.handleFormSubmit} />
@@ -50,7 +65,7 @@ export default class App extends Component {
             <ImageGalleryItem pictures={pictures} />
           </ImageGallery>
         )}
-        {showLoadMoreBtn && <Button />}
+        {showLoadMoreBtn && <Button onClick={this.handleLoadMore} />}
         {/* <Modal /> */}
 
         <Toaster position="top-right" />
