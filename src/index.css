@@ -206,3 +206,10 @@ img {
 .Button:focus {
   background-color: #303f9f;
 }
+
+/* Стили контейнера для Спинера */
+.loaderContainer {
+  display: block;
+  text-align: center;
+  margin: 50px auto;
+}
