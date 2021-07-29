@@ -7,7 +7,7 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Serchbar from "./components/Searchbar";
 import ImageGallery from "./components/ImageGallery.jsx";
 import ImageGalleryItem from "./components/ImageGalleryItem.jsx";
-// import Modal from './components/Modal.jsx'
+import Modal from "./components/Modal.jsx";
 import Button from "./components/Button.jsx";
 import Loader from "react-loader-spinner";
 import PixabayServiseApi from "./services/apiService";
@@ -18,8 +18,10 @@ export default class App extends Component {
   state = {
     pictureName: null,
     pictures: [],
-    reqStatus: "idle",
-    //idle, pending, resolved, rejected
+    reqStatus: "idle", //idle, pending, resolved, rejected
+    showModal: false,
+    largeImageUrl: null,
+    imageTags: null,
   };
 
   componentDidUpdate(_, prevState) {
@@ -46,6 +48,12 @@ export default class App extends Component {
 
   handleFormSubmit = (pictureName) => {
     this.setState({ pictureName: pictureName.trim() });
+    if (pictureName.trim() === this.state.pictureName) {
+      toast("Look, We already find it!", {
+        style: { color: "blue", backgroundColor: "yellow" },
+        icon: "🔥",
+      });
+    }
   };
 
   handleLoadMore = () => {
@@ -66,8 +74,14 @@ export default class App extends Component {
     this.setState({ reqStatus: "resolved" });
   };
 
+  toggleModal = (largeImageURL, imageTags) => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
+    this.setState({ largeImageUrl: largeImageURL, imageTags });
+  };
+
   render() {
-    const { pictures, reqStatus } = this.state;
+    const { pictures, reqStatus, showModal, largeImageUrl, imageTags } =
+      this.state;
     const showGallery = pictures.length > 1;
     const showLoadMoreBtn = pictures.length >= 12;
     return (
@@ -76,7 +90,7 @@ export default class App extends Component {
 
         {showGallery && (
           <ImageGallery>
-            <ImageGalleryItem pictures={pictures} />
+            <ImageGalleryItem pictures={pictures} onClick={this.toggleModal} />
           </ImageGallery>
         )}
         {reqStatus === "pending" && (
@@ -91,9 +105,13 @@ export default class App extends Component {
           </div>
         )}
         {showLoadMoreBtn && <Button onClick={this.handleLoadMore} />}
-
-        {/* <Modal largeImage={largeImage} /> */}
-
+        {showModal && (
+          <Modal
+            largeImg={largeImageUrl}
+            tags={imageTags}
+            onClose={this.toggleModal}
+          />
+        )}
         <Toaster position="top-right" />
       </div>
     );

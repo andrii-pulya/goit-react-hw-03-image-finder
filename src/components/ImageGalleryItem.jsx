@@ -1,4 +1,6 @@
-export default function ImageGalleryItem({ pictures }) {
+import PropTypes from 'prop-types'
+
+export default function ImageGalleryItem({ pictures, onClick }) {
   return (
     <>
       {pictures.map((picture) => (
@@ -7,9 +9,15 @@ export default function ImageGalleryItem({ pictures }) {
             src={picture.webformatURL}
             alt={picture.tags}
             className="ImageGalleryItem-image"
+            onClick={() => onClick(picture.largeImageURL, picture.tags)}
           />
         </li>
       ))}
     </>
   )
+}
+
+ImageGalleryItem.propTypes = {
+  pictures: PropTypes.array.isRequired,
+  onClick: PropTypes.func.isRequired,
 }
